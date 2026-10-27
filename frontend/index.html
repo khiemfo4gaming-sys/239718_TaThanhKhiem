@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Nhân Viên - 239718_TaThanhKhiem</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; }
+    h1 { color: #333; text-align: center; }
+    .container { max-width: 900px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    input { padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 10px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; grid-column: span 2; font-size: 16px; }
+    button:hover { background-color: #218838; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #007bff; color: white; }
+    .btn-delete { background-color: #dc3545; padding: 5px 10px; border: none; color: white; border-radius: 3px; cursor: pointer; }
+    .btn-delete:hover { background-color: #c82333; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>HỆ THỐNG QUẢN LÝ NHÂN VIÊN</h1>
+    
+    <form id="employeeForm">
+      <input type="text" id="employeeId" placeholder="Mã nhân viên (VD: NV01)" required>
+      <input type="text" id="fullName" placeholder="Họ và tên" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="position" placeholder="Chức vụ" required>
+      <input type="text" id="department" placeholder="Phòng ban" required>
+      <input type="number" id="salary" placeholder="Lương" required>
+      <button type="submit">Thêm Nhân Viên</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Mã NV</th>
+          <th>Họ tên</th>
+          <th>Email</th>
+          <th>Chức vụ</th>
+          <th>Phòng ban</th>
+          <th>Lương</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTableBody">
+        <!-- Dữ liệu từ API sẽ hiển thị ở đây -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // URL API Backend trên Render
+    const API_URL = 'https://backend-239718-tathanhkhiem.onrender.com/api/employees';
+
+    // Lấy danh sách nhân viên
+    async function fetchEmployees() {
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const tbody = document.getElementById('employeeTableBody');
+        tbody.innerHTML = '';
+        data.forEach(emp => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${emp.employeeId}</td>
+              <td>${emp.fullName}</td>
+              <td>${emp.email}</td>
+              <td>${emp.position}</td>
+              <td>${emp.department}</td>
+              <td>${emp.salary.toLocaleString()} VNĐ</td>
+              <td><button class="btn-delete" onclick="deleteEmployee('${emp._id}')">Xóa</button></td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        console.error('Lỗi lấy danh sách nhân viên:', err);
+      }
+    }
+
+    // Thêm nhân viên mới
+    document.getElementById('employeeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newEmp = {
+        employeeId: document.getElementById('employeeId').value,
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        position: document.getElementById('position').value,
+        department: document.getElementById('department').value,
+        salary: Number(document.getElementById('salary').value)
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newEmp)
+        });
+        if (res.ok) {
+          document.getElementById('employeeForm').reset();
+          fetchEmployees();
+        } else {
+          alert('Lỗi khi thêm nhân viên (Mã NV có thể bị trùng)!');
+        }
+      } catch (err) {
+        console.error('Lỗi kết nối API:', err);
+      }
+    });
+
+    // Xóa nhân viên
+    async function deleteEmployee(id) {
+      if (confirm('Bạn có chắc chắn muốn xóa nhân viên này?')) {
+        try {
+          await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+          fetchEmployees();
+        } catch (err) {
+          console.error('Lỗi khi xóa:', err);
+        }
+      }
+    }
+
+    // Tải danh sách khi mở trang
+    fetchEmployees();
+  </script>
+</body>
+</html>
