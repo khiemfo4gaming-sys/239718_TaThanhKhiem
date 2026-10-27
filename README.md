@@ -19,5 +19,5 @@
 2. **Link Docker Hub Backend**: https://hub.docker.com/r/239718tathanhkhiem/backend
 3. **Link Docker Hub Frontend**: https://hub.docker.com/r/239718tathanhkhiem/frontend
 4. **Link Render App (Frontend)**: https://frontend-239718-tathanhkhiem.onrender.com
-5. **Link Render API (Backend)**: https://two39718-tathanhkhiem.onrender.com
-6. **Link Data MongoDB**: https://cloud.mongodb.com
+5. **Link Render API (Backend)**: https://two39718-tathanhkhiem.onrender.com/api/employees
+6. **Link Data MongoDB**: mongodb+srv://khiemfo4gaming:Khiem239718@cluster0.mongodb.net/239718_TaThanhKhiem?retryWrites=true&wbb=majority
